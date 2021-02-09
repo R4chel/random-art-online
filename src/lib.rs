@@ -23,14 +23,18 @@ pub fn start() {
 
     let mut x_pos = 10.0;
     let mut y_pos = 10.0;
-    let radius = 2.0;
+    let radius = 5.0;
 
+    let mut r = 000;
+    let mut g = 050;
+    let mut b = 100;
 
     for _ in 0..count {
         
+        let color = format!("rgb({}, {}, {})", r, g, b);
         context.begin_path();
-        context.set_fill_style(&JsValue::from_str("blue"));
-        context.set_stroke_style(&JsValue::from_str("blue"));
+        context.set_fill_style(&JsValue::from_str(&color));
+        context.set_stroke_style(&JsValue::from_str(&color));
 
         // Draw the outer circle.
         context
@@ -42,6 +46,9 @@ pub fn start() {
         
         x_pos += 10.0;
         y_pos += 10.0;
+        r += 10;
+        g += 10;
+        b -= 10;
     }
 
 
