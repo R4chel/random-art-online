@@ -1,14 +1,13 @@
-# 2D Canvas
+# Random Art Online
 
-[View documentation for this example online][dox] or [View compiled example
-online][compiled]
+We are playing with Rust and making some generative art along the way!
 
-[compiled]: https://rustwasm.github.io/wasm-bindgen/exbuild/canvas/
-[dox]: https://rustwasm.github.io/docs/wasm-bindgen/examples/2d-canvas.html
+## Run it / Play
 
 You can build the example locally with:
 
 ```
+$ npm install
 $ npm run serve
 ```
 
