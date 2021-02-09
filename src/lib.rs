@@ -1,7 +1,7 @@
+use js_sys::Math::random;
 use std::f64;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-
 struct Position {
     x: f64,
     y: f64,
@@ -38,8 +38,12 @@ impl Position {
             }
         }
 
-        // #best_coding_practices
-        let random_element = &options.last().unwrap();
+        let mut random_index = 0;
+        unsafe {
+            random_index = f64::floor(random() * options.len() as f64) as usize;
+        }
+
+        let random_element = &options[random_index];
 
         self.x = random_element.x;
         self.y = random_element.y;
