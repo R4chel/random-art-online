@@ -29,7 +29,7 @@ pub fn start() {
     for _ in 0..count {
         
         context.begin_path();
-        context.set_fill_style(&JsValue::from_str("green"));
+        context.set_fill_style(&JsValue::from_str("blue"));
         context.set_stroke_style(&JsValue::from_str("blue"));
 
         // Draw the outer circle.
@@ -37,6 +37,7 @@ pub fn start() {
             .arc(x_pos, y_pos, radius, 0.0, f64::consts::PI * 2.0)
             .unwrap();
 
+        context.fill();
         context.stroke();
         
         x_pos += 10.0;
