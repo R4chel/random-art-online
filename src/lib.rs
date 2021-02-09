@@ -7,85 +7,82 @@ struct Position {
     y: f64,
 }
 
-const POS_DELTA : f64 = 5.0;
-const MIN_POS : f64 = 0.0;
-const MAX_POS : f64 = 100.0;
+const POS_DELTA: f64 = 5.0;
+const MIN_POS: f64 = 0.0;
+const MAX_POS: f64 = 100.0;
 
 impl Position {
-
     fn new() -> Self {
         Position { x: 10.0, y: 10.0 }
     }
 
     fn validate(&self) -> bool {
-        self.x > MIN_POS && self.x < MAX_POS 
- &&           self.y > MIN_POS && self.y < MAX_POS 
+        self.x > MIN_POS && self.x < MAX_POS && self.y > MIN_POS && self.y < MAX_POS
     }
+
     fn update(&mut self) {
-        let mut options : Vec<Self> = Vec::new();
+        let mut options: Vec<Self> = Vec::new();
 
         for x_multiplier in -1..2 {
-                for y_multiplier in -1..2 {
-                   let new_position =  
-                        Position{
-                            x : self.x + POS_DELTA * f64::from(x_multiplier),
-                            y : self.y + POS_DELTA * f64::from(y_multiplier)
-                        };
-
-                    if x_multiplier == 0 && y_multiplier == 0 || !new_position.validate()
-                    { continue }
-                    else {
-                        options.push(new_position)
+            for y_multiplier in -1..2 {
+                let new_position = Position {
+                    x: self.x + POS_DELTA * f64::from(x_multiplier),
+                    y: self.y + POS_DELTA * f64::from(y_multiplier),
                 };
 
-                }}
-
-            // #best_coding_practices 
-            let random_element = &options.last().unwrap();
-
-            self.x = random_element.x;
-            self.y = random_element.y;
-
-        }
-    }
-    struct Color {
-        r: u8,
-        g: u8,
-        b: u8,
-    }
-
-    impl Color {
-        fn new() -> Self {
-            Color { r: 0, g: 0, b: 255 }
-        }
-
-        fn to_js_value(&self) -> JsValue {
-            JsValue::from_str(&format!("rgb({}, {}, {})", self.r, self.g, self.b))
-        }
-    }
-    struct Circle {
-        position: Position,
-        color: Color,
-        radius: f64,
-    }
-
-    impl Circle {
-        fn new() -> Self {
-            Circle {
-                position: Position::new(),
-                color: Color::new(),
-                radius: 5.0,
+                if x_multiplier == 0 && y_multiplier == 0 || !new_position.validate() {
+                    continue;
+                } else {
+                    options.push(new_position)
+                };
             }
         }
 
-        fn update(&mut self) {
-            self.position.update();
+        // #best_coding_practices
+        let random_element = &options.last().unwrap();
+
+        self.x = random_element.x;
+        self.y = random_element.y;
+    }
+}
+struct Color {
+    r: u8,
+    g: u8,
+    b: u8,
+}
+
+impl Color {
+    fn new() -> Self {
+        Color { r: 0, g: 0, b: 255 }
+    }
+
+    fn to_js_value(&self) -> JsValue {
+        JsValue::from_str(&format!("rgb({}, {}, {})", self.r, self.g, self.b))
+    }
+}
+struct Circle {
+    position: Position,
+    color: Color,
+    radius: f64,
+}
+
+impl Circle {
+    fn new() -> Self {
+        Circle {
+            position: Position::new(),
+            color: Color::new(),
+            radius: 5.0,
         }
     }
 
-    #[wasm_bindgen(start)]
-    pub fn start() {
-        let document = web_sys::window().unwrap().document().unwrap();
+    fn update(&mut self) {
+        self.position.update();
+    }
+}
+
+#[wasm_bindgen(start)]
+pub fn start() {
+    let document = web_sys::window().unwrap().document().unwrap();
     let canvas = document.get_element_by_id("canvas").unwrap();
     let canvas: web_sys::HtmlCanvasElement = canvas
         .dyn_into::<web_sys::HtmlCanvasElement>()
@@ -104,7 +101,6 @@ impl Position {
     let mut circle = Circle::new();
 
     for _ in 0..count {
-        
         context.begin_path();
 
         context.set_fill_style(&circle.color.to_js_value());
@@ -112,13 +108,18 @@ impl Position {
 
         // Draw the outer circle.
         context
-            .arc(circle.position.x, circle.position.y, circle.radius, 0.0, f64::consts::PI * 2.0)
+            .arc(
+                circle.position.x,
+                circle.position.y,
+                circle.radius,
+                0.0,
+                f64::consts::PI * 2.0,
+            )
             .unwrap();
 
         context.fill();
         context.stroke();
 
-        circle.update(); 
-
+        circle.update();
     }
 }
