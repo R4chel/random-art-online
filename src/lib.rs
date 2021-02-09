@@ -1,7 +1,10 @@
 use js_sys::Math::random;
 use std::f64;
+use std::fmt::{self, Display};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+
+#[derive(Debug)]
 struct Position {
     x: f64,
     y: f64,
@@ -49,21 +52,70 @@ impl Position {
         self.y = random_element.y;
     }
 }
+
+#[derive(Debug)]
+struct ColorBit {
+    bit: u8,
+}
+
+impl Display for ColorBit {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({})", self.bit)
+    }
+}
+
+const COLOR_DELTA: u8 = 10;
+
+impl ColorBit {
+    fn new() -> Self {
+        ColorBit { bit: 0 }
+    }
+
+    fn rand() -> Self {
+        ColorBit {
+            bit: unsafe { f64::floor(random() * 255 as f64) as u8 },
+        }
+    }
+
+    fn update(&mut self) -> () {
+        unsafe {
+            if random() > 0.5 {
+                self.bit = self.bit.checked_add(COLOR_DELTA).unwrap_or(self.bit)
+            } else {
+                self.bit = self.bit.checked_sub(COLOR_DELTA).unwrap_or(self.bit)
+            }
+        };
+    }
+}
+
+#[derive(Debug)]
 struct Color {
-    r: u8,
-    g: u8,
-    b: u8,
+    r: ColorBit,
+    g: ColorBit,
+    b: ColorBit,
 }
 
 impl Color {
     fn new() -> Self {
-        Color { r: 0, g: 0, b: 255 }
+        Color {
+            r: ColorBit::rand(),
+            g: ColorBit::rand(),
+            b: ColorBit::rand(),
+        }
     }
 
     fn to_js_value(&self) -> JsValue {
-        JsValue::from_str(&format!("rgb({}, {}, {})", self.r, self.g, self.b))
+        JsValue::from_str(&format!("rgb({}, {}, {})", self.r.bit, self.g.bit, self.b.bit))
+    }
+
+    fn update(&mut self) {
+        self.r.update();
+        self.g.update();
+        self.b.update();
     }
 }
+
+#[derive(Debug)]
 struct Circle {
     position: Position,
     color: Color,
@@ -75,12 +127,13 @@ impl Circle {
         Circle {
             position: Position::new(),
             color: Color::new(),
-            radius: 5.0,
+            radius: 2.0,
         }
     }
 
     fn update(&mut self) {
         self.position.update();
+        self.color.update();
     }
 }
 
@@ -106,7 +159,6 @@ pub fn start() {
 
     for _ in 0..count {
         context.begin_path();
-
         context.set_fill_style(&circle.color.to_js_value());
         context.set_stroke_style(&circle.color.to_js_value());
 
