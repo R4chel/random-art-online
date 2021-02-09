@@ -18,37 +18,30 @@ pub fn start() {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
-    context.begin_path();
-    // context.set_stroke_style(&JsValue::from_str("pink    "));
+
+    let count = 7;
+
+    let mut x_pos = 10.0;
+    let mut y_pos = 10.0;
+    let radius = 2.0;
 
 
-    // Draw the outer circle.
-    context
-        .arc(75.0, 75.0, 50.0, 0.0, f64::consts::PI * 2.0)
-        .unwrap();
-
+    for _ in 0..count {
         
-    // Draw the mouth.
-    context.move_to(110.0, 75.0);
-    context.arc(75.0, 75.0, 35.0, 0.0, f64::consts::PI).unwrap();
-    
-    context.stroke();
+        context.begin_path();
+        context.set_fill_style(&JsValue::from_str("green"));
+        context.set_stroke_style(&JsValue::from_str("blue"));
 
-    context.begin_path();
-    context.set_stroke_style(&JsValue::from_str("green"));
+        // Draw the outer circle.
+        context
+            .arc(x_pos, y_pos, radius, 0.0, f64::consts::PI * 2.0)
+            .unwrap();
+
+        context.stroke();
+        
+        x_pos += 10.0;
+        y_pos += 10.0;
+    }
 
 
-    // Draw the left eye.
-    context.move_to(65.0, 65.0);
-    context
-        .arc(60.0, 65.0, 5.0, 0.0, f64::consts::PI * 2.0)
-        .unwrap();
-
-    // Draw the right eye.
-    context.move_to(95.0, 65.0);
-    context
-        .arc(90.0, 65.0, 5.0, 0.0, f64::consts::PI * 2.0)
-        .unwrap();
-
-    context.stroke();
 }
