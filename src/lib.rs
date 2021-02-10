@@ -10,9 +10,9 @@ struct Position {
     y: f64,
 }
 
-const POS_DELTA: f64 = 5.0;
+const POS_DELTA: f64 = 2.1;
 const MIN_POS: f64 = 0.0;
-const MAX_POS: f64 = 100.0;
+const MAX_POS: f64 = 500.0;
 
 impl Position {
     fn new() -> Self {
@@ -153,7 +153,7 @@ pub fn start() {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
-    let count = 700;
+    let count = 7000;
 
     let mut circle = Circle::new();
 
