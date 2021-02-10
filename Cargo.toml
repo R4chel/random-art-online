@@ -22,5 +22,6 @@ features = [
   'console',
   'HtmlButtonElement',
   'EventListener',
-  'HtmlParagraphElement'
+  'HtmlParagraphElement',
+  'HtmlInputElement'
 ]

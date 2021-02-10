@@ -13,11 +13,11 @@ struct Position {
     y: f64,
 }
 
-const POS_DELTA: f64 = 2.1;
+const POS_DELTA: f64 = 2.67;
 const MIN_POS: f64 = 0.0;
 const MAX_X_POS: f64 = 500.0;
 const MAX_Y_POS: f64 = 250.0;
-const RADIUS: f64 = 2.0;
+const RADIUS: f64 = 2.34;
 impl Position {
     fn rand() -> Self {
         Position {
@@ -68,8 +68,6 @@ impl Display for ColorBit {
     }
 }
 
-const COLOR_DELTA: u8 = 10;
-
 impl ColorBit {
     fn rand() -> Self {
         ColorBit {
@@ -77,11 +75,11 @@ impl ColorBit {
         }
     }
 
-    fn update(&mut self) -> () {
+    fn update(&mut self, color_delta: u8) -> () {
         if random() > 0.5 {
-            self.bit = self.bit.saturating_add(COLOR_DELTA);
+            self.bit = self.bit.saturating_add(color_delta);
         } else {
-            self.bit = self.bit.saturating_sub(COLOR_DELTA);
+            self.bit = self.bit.saturating_sub(color_delta);
         };
     }
 }
@@ -109,10 +107,12 @@ impl Color {
         ))
     }
 
-    fn update(&mut self) {
-        self.r.update();
-        self.g.update();
-        self.b.update();
+    fn update(&mut self, color_delta: u8) {
+        let update_with_delta = move | x | ColorBit::update(x, color_delta);
+
+        update_with_delta(&mut self.r);
+        update_with_delta(&mut self.g);
+        update_with_delta(&mut self.b);
     }
 }
 
@@ -132,9 +132,9 @@ impl Circle {
         }
     }
 
-    fn update(&mut self) {
+    fn update(&mut self, color_delta: u8) {
         self.position.update();
-        self.color.update();
+        self.color.update(color_delta);
     }
 }
 
@@ -187,8 +187,13 @@ fn make_art() {
         // requestAnimationFrame callback has fired.
         i += 1;
 
+        let MIN_COLOR_DELTA = 10.0;
+        let MAX_COLOR_DELTA = 50.0;
+
+        let color_delta = color_slider_value() as u8;
+
         draw_circle(&context, &circle);
-        circle.update();
+        circle.update(color_delta);
 
         // Schedule ourself for another requestAnimationFrame callback.
         request_animation_frame(f.borrow().as_ref().unwrap());
@@ -231,6 +236,17 @@ fn context() -> web_sys::CanvasRenderingContext2d {
         .unwrap()
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap()
+}
+
+fn color_slider_value() -> u8 {
+    document()
+    .get_element_by_id("colorSlider")
+    .unwrap()
+    .dyn_into::<web_sys::HtmlInputElement>()
+    .unwrap()
+    .value_as_number()
+    as u8
+    
 }
 
 #[wasm_bindgen(start)]
