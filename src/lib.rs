@@ -176,7 +176,6 @@ fn make_art() {
 
     *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
         if i > 7000 {
-            body().set_text_content(Some("All done!"));
 
             // Drop our handle to this closure so that it will get cleaned
             // up once we return.
