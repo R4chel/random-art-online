@@ -1,9 +1,9 @@
 use js_sys::Math::random;
-use web_sys::EventListener;
 use std::f64;
 use std::fmt::{self, Display};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use web_sys::EventListener;
 
 #[derive(Debug)]
 struct Position {
@@ -136,10 +136,9 @@ impl Circle {
     }
 }
 
-fn make_art(context : web_sys::CanvasRenderingContext2d) {
-    
+fn make_art(context: web_sys::CanvasRenderingContext2d) {
     let count = 7000;
-    
+
     let mut circle = Circle::new();
 
     for _ in 0..count {
@@ -164,11 +163,17 @@ fn make_art(context : web_sys::CanvasRenderingContext2d) {
     }
 }
 
+fn make_fn(context: web_sys::CanvasRenderingContext2d) -> js_sys::Function {
+    js_sys::Function::new_with_args("", "")
+    
+    // make_art(context)
+}
+
 #[wasm_bindgen(start)]
 pub fn start() {
     let document = web_sys::window().unwrap().document().unwrap();
-	
-    let canvas = document.get_element_by_id("canvas").unwrap();    
+
+    let canvas = document.get_element_by_id("canvas").unwrap();
     let canvas: web_sys::HtmlCanvasElement = canvas
         .dyn_into::<web_sys::HtmlCanvasElement>()
         .map_err(|_| ())
@@ -181,5 +186,19 @@ pub fn start() {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
-    make_art(context);
+    let button = document
+        .get_element_by_id("button")
+        .unwrap()
+        .dyn_into::<web_sys::HtmlButtonElement>()
+        .unwrap();
+
+        let a = Closure::wrap(Box::new(move || {
+            web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("hello")));
+        }) as Box<dyn FnMut()>);
+        button.set_onclick(Some(a.as_ref().unchecked_ref()));
+        a.forget();
+
+
+    // button.set_onclick(Some(&make_fn(context)));
+    // make_art(context);
 }
