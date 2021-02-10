@@ -19,5 +19,8 @@ features = [
   'Element',
   'HtmlCanvasElement',
   'Window',
-  'console'
+  'console',
+  'HtmlButtonElement',
+  'EventListener',
+  'HtmlParagraphElement'
 ]

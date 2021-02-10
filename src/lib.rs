@@ -1,4 +1,5 @@
 use js_sys::Math::random;
+use web_sys::EventListener;
 use std::f64;
 use std::fmt::{self, Display};
 use wasm_bindgen::prelude::*;
@@ -135,10 +136,12 @@ impl Circle {
     }
 }
 
+
 #[wasm_bindgen(start)]
 pub fn start() {
     let document = web_sys::window().unwrap().document().unwrap();
-    let canvas = document.get_element_by_id("canvas").unwrap();
+	
+    let canvas = document.get_element_by_id("canvas").unwrap();    
     let canvas: web_sys::HtmlCanvasElement = canvas
         .dyn_into::<web_sys::HtmlCanvasElement>()
         .map_err(|_| ())
@@ -151,6 +154,7 @@ pub fn start() {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
+    
     let count = 7000;
 
     let mut circle = Circle::new();
@@ -175,4 +179,5 @@ pub fn start() {
 
         circle.update();
     }
+    
 }
