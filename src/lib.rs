@@ -26,14 +26,14 @@ impl Position {
     fn update(&mut self) {
         let mut options: Vec<Self> = Vec::new();
 
-        for x_multiplier in -1..2 {
-            for y_multiplier in -1..2 {
+        for x_multiplier in -1..=1 {
+            for y_multiplier in -1..=1 {
                 let new_position = Position {
-                    x: self.x + POS_DELTA * f64::from(x_multiplier),
-                    y: self.y + POS_DELTA * f64::from(y_multiplier),
+                    x: self.x + POS_DELTA * (x_multiplier as f64),
+                    y: self.y + POS_DELTA * (y_multiplier as f64),
                 };
 
-                if x_multiplier == 0 && y_multiplier == 0 || !new_position.validate() {
+                if (x_multiplier == 0 && y_multiplier == 0) || !new_position.validate() {
                     continue;
                 } else {
                     options.push(new_position)
@@ -41,10 +41,7 @@ impl Position {
             }
         }
 
-        let mut random_index = 0;
-        unsafe {
-            random_index = f64::floor(random() * options.len() as f64) as usize;
-        }
+        let random_index = f64::floor(random() * options.len() as f64) as usize;
 
         let random_element = &options[random_index];
 
@@ -73,17 +70,15 @@ impl ColorBit {
 
     fn rand() -> Self {
         ColorBit {
-            bit: unsafe { f64::floor(random() * 255 as f64) as u8 },
+            bit: f64::floor(random() * 255 as f64) as u8,
         }
     }
 
     fn update(&mut self) -> () {
-        unsafe {
-            if random() > 0.5 {
-                self.bit = self.bit.checked_add(COLOR_DELTA).unwrap_or(self.bit)
-            } else {
-                self.bit = self.bit.checked_sub(COLOR_DELTA).unwrap_or(self.bit)
-            }
+        if random() > 0.5 {
+            self.bit = self.bit.saturating_add(COLOR_DELTA);
+        } else {
+            self.bit = self.bit.saturating_sub(COLOR_DELTA);
         };
     }
 }
@@ -105,7 +100,10 @@ impl Color {
     }
 
     fn to_js_value(&self) -> JsValue {
-        JsValue::from_str(&format!("rgb({}, {}, {})", self.r.bit, self.g.bit, self.b.bit))
+        JsValue::from_str(&format!(
+            "rgb({}, {}, {})",
+            self.r.bit, self.g.bit, self.b.bit
+        ))
     }
 
     fn update(&mut self) {
@@ -162,7 +160,6 @@ pub fn start() {
         context.set_fill_style(&circle.color.to_js_value());
         context.set_stroke_style(&circle.color.to_js_value());
 
-        // Draw the outer circle.
         context
             .arc(
                 circle.position.x,
