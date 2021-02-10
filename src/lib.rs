@@ -13,16 +13,18 @@ struct Position {
 
 const POS_DELTA: f64 = 2.1;
 const MIN_POS: f64 = 0.0;
-const MAX_X_POS : f64 = 500.0;
-const MAX_Y_POS : f64 = 250.0;
-
+const MAX_X_POS: f64 = 500.0;
+const MAX_Y_POS: f64 = 250.0;
+const RADIUS: f64 = 2.0;
 impl Position {
-    fn new() -> Self {
-        Position { x: 10.0, y: 10.0 }
+    fn rand() -> Self {
+        Position {
+            x: f64::floor(random() * (MAX_X_POS - MIN_POS) as f64) + MIN_POS,
+            y: f64::floor(random() * (MAX_Y_POS - MIN_POS) as f64) + MIN_POS,
+        }
     }
 
     fn validate(&self) -> bool {
-
         self.x > MIN_POS && self.x < MAX_X_POS && self.y > MIN_POS && self.y < MAX_Y_POS
     }
 
@@ -67,10 +69,6 @@ impl Display for ColorBit {
 const COLOR_DELTA: u8 = 10;
 
 impl ColorBit {
-    fn new() -> Self {
-        ColorBit { bit: 0 }
-    }
-
     fn rand() -> Self {
         ColorBit {
             bit: f64::floor(random() * 255 as f64) as u8,
@@ -94,7 +92,7 @@ struct Color {
 }
 
 impl Color {
-    fn new() -> Self {
+    fn rand() -> Self {
         Color {
             r: ColorBit::rand(),
             g: ColorBit::rand(),
@@ -126,9 +124,9 @@ struct Circle {
 impl Circle {
     fn new() -> Self {
         Circle {
-            position: Position::new(),
-            color: Color::new(),
-            radius: 2.0,
+            position: Position::rand(),
+            color: Color::rand(),
+            radius: RADIUS,
         }
     }
 
@@ -139,7 +137,7 @@ impl Circle {
 }
 
 fn make_art(context: &web_sys::CanvasRenderingContext2d) {
-    context.clear_rect(MIN_POS, MIN_POS, MAX_X_POS, MAX_Y_POS);
+    context.clear_rect(MIN_POS, MIN_POS, MAX_X_POS + RADIUS, MAX_Y_POS + RADIUS);
 
     let count = 7000;
 
@@ -169,7 +167,9 @@ fn make_art(context: &web_sys::CanvasRenderingContext2d) {
 
 #[wasm_bindgen(start)]
 pub fn start() {
-    web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("I love printf debugging!")));
+    web_sys::console::log(&js_sys::Array::from(&JsValue::from_str(
+        "I love printf debugging!",
+    )));
     let document = web_sys::window().unwrap().document().unwrap();
 
     let canvas = document.get_element_by_id("canvas").unwrap();
@@ -196,6 +196,4 @@ pub fn start() {
     }) as Box<dyn FnMut()>);
     button.set_onclick(Some(onclick_handler.as_ref().unchecked_ref()));
     onclick_handler.forget();
-
-    //make_art(&context);
 }
