@@ -13,7 +13,8 @@ struct Position {
 
 const POS_DELTA: f64 = 2.1;
 const MIN_POS: f64 = 0.0;
-const MAX_POS: f64 = 500.0;
+const MAX_X_POS : f64 = 500.0;
+const MAX_Y_POS : f64 = 250.0;
 
 impl Position {
     fn new() -> Self {
@@ -21,7 +22,8 @@ impl Position {
     }
 
     fn validate(&self) -> bool {
-        self.x > MIN_POS && self.x < MAX_POS && self.y > MIN_POS && self.y < MAX_POS
+
+        self.x > MIN_POS && self.x < MAX_X_POS && self.y > MIN_POS && self.y < MAX_Y_POS
     }
 
     fn update(&mut self) {
@@ -136,7 +138,9 @@ impl Circle {
     }
 }
 
-fn make_art(context: web_sys::CanvasRenderingContext2d) {
+fn make_art(context: &web_sys::CanvasRenderingContext2d) {
+    context.clear_rect(MIN_POS, MIN_POS, MAX_X_POS, MAX_Y_POS);
+
     let count = 7000;
 
     let mut circle = Circle::new();
@@ -163,14 +167,9 @@ fn make_art(context: web_sys::CanvasRenderingContext2d) {
     }
 }
 
-fn make_fn(context: web_sys::CanvasRenderingContext2d) -> js_sys::Function {
-    js_sys::Function::new_with_args("", "")
-    
-    // make_art(context)
-}
-
 #[wasm_bindgen(start)]
 pub fn start() {
+    web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("I love printf debugging!")));
     let document = web_sys::window().unwrap().document().unwrap();
 
     let canvas = document.get_element_by_id("canvas").unwrap();
@@ -192,13 +191,11 @@ pub fn start() {
         .dyn_into::<web_sys::HtmlButtonElement>()
         .unwrap();
 
-        let a = Closure::wrap(Box::new(move || {
-            web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("hello")));
-        }) as Box<dyn FnMut()>);
-        button.set_onclick(Some(a.as_ref().unchecked_ref()));
-        a.forget();
+    let onclick_handler = Closure::wrap(Box::new(move || {
+        make_art(&context);
+    }) as Box<dyn FnMut()>);
+    button.set_onclick(Some(onclick_handler.as_ref().unchecked_ref()));
+    onclick_handler.forget();
 
-
-    // button.set_onclick(Some(&make_fn(context)));
-    // make_art(context);
+    //make_art(&context);
 }
