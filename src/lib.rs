@@ -136,8 +136,13 @@ impl Circle {
     }
 }
 
-fn make_art(context: &web_sys::CanvasRenderingContext2d) {
-    context.clear_rect(MIN_POS, MIN_POS, MAX_X_POS + RADIUS, MAX_Y_POS + RADIUS);
+fn make_art(canvas: &web_sys::HtmlCanvasElement, context: &web_sys::CanvasRenderingContext2d) {
+    context.clear_rect(
+        MIN_POS,
+        MIN_POS,
+        canvas.width() as f64,
+        canvas.height() as f64,
+    );
 
     let count = 7000;
 
@@ -192,7 +197,7 @@ pub fn start() {
         .unwrap();
 
     let onclick_handler = Closure::wrap(Box::new(move || {
-        make_art(&context);
+        make_art(&canvas, &context);
     }) as Box<dyn FnMut()>);
     button.set_onclick(Some(onclick_handler.as_ref().unchecked_ref()));
     onclick_handler.forget();
