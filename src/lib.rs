@@ -136,27 +136,10 @@ impl Circle {
     }
 }
 
-
-#[wasm_bindgen(start)]
-pub fn start() {
-    let document = web_sys::window().unwrap().document().unwrap();
-	
-    let canvas = document.get_element_by_id("canvas").unwrap();    
-    let canvas: web_sys::HtmlCanvasElement = canvas
-        .dyn_into::<web_sys::HtmlCanvasElement>()
-        .map_err(|_| ())
-        .unwrap();
-
-    let context = canvas
-        .get_context("2d")
-        .unwrap()
-        .unwrap()
-        .dyn_into::<web_sys::CanvasRenderingContext2d>()
-        .unwrap();
-
+fn make_art(context : web_sys::CanvasRenderingContext2d) {
     
     let count = 7000;
-
+    
     let mut circle = Circle::new();
 
     for _ in 0..count {
@@ -179,5 +162,24 @@ pub fn start() {
 
         circle.update();
     }
-    
+}
+
+#[wasm_bindgen(start)]
+pub fn start() {
+    let document = web_sys::window().unwrap().document().unwrap();
+	
+    let canvas = document.get_element_by_id("canvas").unwrap();    
+    let canvas: web_sys::HtmlCanvasElement = canvas
+        .dyn_into::<web_sys::HtmlCanvasElement>()
+        .map_err(|_| ())
+        .unwrap();
+
+    let context = canvas
+        .get_context("2d")
+        .unwrap()
+        .unwrap()
+        .dyn_into::<web_sys::CanvasRenderingContext2d>()
+        .unwrap();
+
+    make_art(context);
 }
