@@ -1,6 +1,8 @@
 use js_sys::Math::random;
+use std::cell::RefCell;
 use std::f64;
 use std::fmt::{self, Display};
+use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::EventListener;
@@ -136,38 +138,100 @@ impl Circle {
     }
 }
 
-fn make_art(canvas: &web_sys::HtmlCanvasElement, context: &web_sys::CanvasRenderingContext2d) {
-    context.clear_rect(
-        MIN_POS,
-        MIN_POS,
-        canvas.width() as f64,
-        canvas.height() as f64,
-    );
+fn draw_circle(context: &web_sys::CanvasRenderingContext2d, circle : &Circle) {
+    context.begin_path();
+    context.set_fill_style(&circle.color.to_js_value());
+    context.set_stroke_style(&circle.color.to_js_value());
 
-    let count = 7000;
+    context
+        .arc(
+            circle.position.x,
+            circle.position.y,
+            circle.radius,
+            0.0,
+            f64::consts::PI * 2.0,
+        )
+        .unwrap();
+
+    context.fill();
+    context.stroke();
+}
+
+fn make_art() {
+    let canvas = canvas();
+    let context = context();
+
+    context.clear_rect(
+            MIN_POS,
+            MIN_POS,
+            canvas.width() as f64,
+            canvas.height() as f64,
+        );
 
     let mut circle = Circle::new();
+    let f = Rc::new(RefCell::new(None));
+    let g = f.clone();
 
-    for _ in 0..count {
-        context.begin_path();
-        context.set_fill_style(&circle.color.to_js_value());
-        context.set_stroke_style(&circle.color.to_js_value());
+    let mut i = 0;
 
-        context
-            .arc(
-                circle.position.x,
-                circle.position.y,
-                circle.radius,
-                0.0,
-                f64::consts::PI * 2.0,
-            )
-            .unwrap();
+    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+        if i > 7000 {
+            body().set_text_content(Some("All done!"));
 
-        context.fill();
-        context.stroke();
+            // Drop our handle to this closure so that it will get cleaned
+            // up once we return.
+            let _ = f.borrow_mut().take();
+            return;
+        }
 
+        // Set the body's text content to how many times this
+        // requestAnimationFrame callback has fired.
+        i += 1;
+
+        draw_circle(&context, &circle);
         circle.update();
-    }
+
+        // Schedule ourself for another requestAnimationFrame callback.
+        request_animation_frame(f.borrow().as_ref().unwrap());
+    }) as Box<dyn FnMut()>));
+
+    request_animation_frame(g.borrow().as_ref().unwrap());
+}
+
+fn window() -> web_sys::Window {
+    web_sys::window().expect("no global `window` exists")
+}
+
+fn request_animation_frame(f: &Closure<dyn FnMut()>) {
+    window()
+        .request_animation_frame(f.as_ref().unchecked_ref())
+        .expect("should register `requestAnimationFrame` OK");
+}
+
+fn document() -> web_sys::Document {
+    window()
+        .document()
+        .expect("should have a document on window")
+}
+
+fn body() -> web_sys::HtmlElement {
+    document().body().expect("document should have a body")
+}
+
+fn canvas() -> web_sys::HtmlCanvasElement{
+    document().get_element_by_id("canvas").unwrap()
+        .dyn_into::<web_sys::HtmlCanvasElement>()
+        .map_err(|_| ())
+        .unwrap()
+}
+
+fn context() -> web_sys::CanvasRenderingContext2d {
+    canvas()
+        .get_context("2d")
+        .unwrap()
+        .unwrap()
+        .dyn_into::<web_sys::CanvasRenderingContext2d>()
+        .unwrap()
 }
 
 #[wasm_bindgen(start)]
@@ -175,20 +239,7 @@ pub fn start() {
     web_sys::console::log(&js_sys::Array::from(&JsValue::from_str(
         "I love printf debugging!",
     )));
-    let document = web_sys::window().unwrap().document().unwrap();
-
-    let canvas = document.get_element_by_id("canvas").unwrap();
-    let canvas: web_sys::HtmlCanvasElement = canvas
-        .dyn_into::<web_sys::HtmlCanvasElement>()
-        .map_err(|_| ())
-        .unwrap();
-
-    let context = canvas
-        .get_context("2d")
-        .unwrap()
-        .unwrap()
-        .dyn_into::<web_sys::CanvasRenderingContext2d>()
-        .unwrap();
+    let document = document();
 
     let button = document
         .get_element_by_id("button")
@@ -196,9 +247,12 @@ pub fn start() {
         .dyn_into::<web_sys::HtmlButtonElement>()
         .unwrap();
 
-    let onclick_handler = Closure::wrap(Box::new(move || {
-        make_art(&canvas, &context);
-    }) as Box<dyn FnMut()>);
-    button.set_onclick(Some(onclick_handler.as_ref().unchecked_ref()));
-    onclick_handler.forget();
+    // TODO: disabling on click weird stuff with closure for now
+    // let onclick_handler = Closure::wrap(Box::new(move || {
+        // make_art(&canvas, &context);
+    // }) as Box<dyn FnMut()>);
+    // button.set_onclick(Some(onclick_handler.as_ref().unchecked_ref()));
+    // onclick_handler.forget();
+
+    make_art();
 }
