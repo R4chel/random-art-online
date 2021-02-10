@@ -153,7 +153,7 @@ pub fn start() {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
-    let count = 7;
+    let count = 700;
 
     let mut circle = Circle::new();
 
