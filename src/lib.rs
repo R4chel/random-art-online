@@ -13,11 +13,11 @@ struct Position {
     y: f64,
 }
 
-const POS_DELTA: f64 = 2.01;
+const POS_DELTA: f64 = 2.64;
 const MIN_POS: f64 = 0.0;
 const MAX_X_POS: f64 = 500.0;
 const MAX_Y_POS: f64 = 250.0;
-const RADIUS: f64 = 2.0;
+const RADIUS: f64 = 2.2;
 impl Position {
     fn rand() -> Self {
         Position {
