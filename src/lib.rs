@@ -108,7 +108,7 @@ impl Color {
     }
 
     fn update(&mut self, color_delta: u8) {
-        let update_with_delta = move | x | ColorBit::update(x, color_delta);
+        let update_with_delta = move |x| ColorBit::update(x, color_delta);
 
         update_with_delta(&mut self.r);
         update_with_delta(&mut self.g);
@@ -138,7 +138,7 @@ impl Circle {
     }
 }
 
-fn draw_circle(context: &web_sys::CanvasRenderingContext2d, circle : &Circle) {
+fn draw_circle(context: &web_sys::CanvasRenderingContext2d, circle: &Circle) {
     context.begin_path();
     context.set_fill_style(&circle.color.to_js_value());
     context.set_stroke_style(&circle.color.to_js_value());
@@ -162,11 +162,11 @@ fn make_art() {
     let context = context();
 
     context.clear_rect(
-            MIN_POS,
-            MIN_POS,
-            canvas.width() as f64,
-            canvas.height() as f64,
-        );
+        MIN_POS,
+        MIN_POS,
+        canvas.width() as f64,
+        canvas.height() as f64,
+    );
 
     let mut circle = Circle::new();
     let f = Rc::new(RefCell::new(None));
@@ -176,7 +176,6 @@ fn make_art() {
     let count = 100000;
     *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
         if i > count {
-
             // Drop our handle to this closure so that it will get cleaned
             // up once we return.
             let _ = f.borrow_mut().take();
@@ -222,8 +221,10 @@ fn body() -> web_sys::HtmlElement {
     document().body().expect("document should have a body")
 }
 
-fn canvas() -> web_sys::HtmlCanvasElement{
-    document().get_element_by_id("canvas").unwrap()
+fn canvas() -> web_sys::HtmlCanvasElement {
+    document()
+        .get_element_by_id("canvas")
+        .unwrap()
         .dyn_into::<web_sys::HtmlCanvasElement>()
         .map_err(|_| ())
         .unwrap()
@@ -240,13 +241,11 @@ fn context() -> web_sys::CanvasRenderingContext2d {
 
 fn color_slider_value() -> u8 {
     document()
-    .get_element_by_id("colorSlider")
-    .unwrap()
-    .dyn_into::<web_sys::HtmlInputElement>()
-    .unwrap()
-    .value_as_number()
-    as u8
-    
+        .get_element_by_id("colorSlider")
+        .unwrap()
+        .dyn_into::<web_sys::HtmlInputElement>()
+        .unwrap()
+        .value_as_number() as u8
 }
 
 #[wasm_bindgen(start)]
@@ -264,7 +263,7 @@ pub fn start() {
 
     // TODO: disabling on click weird stuff with closure for now
     // let onclick_handler = Closure::wrap(Box::new(move || {
-        // make_art(&canvas, &context);
+    // make_art(&canvas, &context);
     // }) as Box<dyn FnMut()>);
     // button.set_onclick(Some(onclick_handler.as_ref().unchecked_ref()));
     // onclick_handler.forget();
