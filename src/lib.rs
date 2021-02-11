@@ -12,7 +12,6 @@ struct Position {
     y: f64,
 }
 
-const POS_DELTA: f64 = 2.64;
 const MIN_POS: f64 = 0.0;
 const MAX_X_POS: f64 = 500.0;
 const MAX_Y_POS: f64 = 250.0;
@@ -29,14 +28,14 @@ impl Position {
         self.x > MIN_POS && self.x < MAX_X_POS && self.y > MIN_POS && self.y < MAX_Y_POS
     }
 
-    fn update(&mut self) {
+    fn update(&mut self, position_delta: f64) {
         let mut options: Vec<Self> = Vec::new();
 
         for x_multiplier in -1..=1 {
             for y_multiplier in -1..=1 {
                 let new_position = Position {
-                    x: self.x + POS_DELTA * (x_multiplier as f64),
-                    y: self.y + POS_DELTA * (y_multiplier as f64),
+                    x: self.x + position_delta * (x_multiplier as f64),
+                    y: self.y + position_delta * (y_multiplier as f64),
                 };
 
                 if (x_multiplier == 0 && y_multiplier == 0) || !new_position.validate() {
@@ -131,8 +130,8 @@ impl Circle {
         }
     }
 
-    fn update(&mut self, color_delta: u8) {
-        self.position.update();
+    fn update(&mut self, position_delta: f64, color_delta: u8) {
+        self.position.update(position_delta);
         self.color.update(color_delta);
     }
 }
@@ -174,10 +173,12 @@ fn make_unanimated_art() {
     let mut circle = Circle::new();
 
     let count = count_slider_value();
+    let position_delta = distance_slider_value();
     let color_delta = color_slider_value() as u8;
+
     for _ in 0..count {
         draw_circle(&context, &circle);
-        circle.update(color_delta);
+        circle.update(position_delta, color_delta);
     }
 }
 fn make_animated_art() {
@@ -201,10 +202,11 @@ fn make_animated_art() {
 
         i += 1;
 
+        let position_delta = distance_slider_value();
         let color_delta = color_slider_value() as u8;
 
         draw_circle(&context, &circle);
-        circle.update(color_delta);
+        circle.update(position_delta, color_delta);
 
         // Schedule ourself for another requestAnimationFrame callback.
         request_animation_frame(f.borrow().as_ref().unwrap());
@@ -263,6 +265,15 @@ fn count_slider_value() -> u32 {
         .dyn_into::<web_sys::HtmlInputElement>()
         .unwrap()
         .value_as_number() as u32
+}
+
+fn distance_slider_value() -> f64 {
+    document()
+        .get_element_by_id("distanceSlider")
+        .unwrap()
+        .dyn_into::<web_sys::HtmlInputElement>()
+        .unwrap()
+        .value_as_number()
 }
 
 #[wasm_bindgen(start)]

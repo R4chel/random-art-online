@@ -9,6 +9,7 @@
   <button id="trashButton">&#128465</button>
   <button id="stillButton">&#127823</button>
   <div class="slidecontainer">
+      <a>&#127752</a>
     <input type="range" min="0" max="50" value="5" class="slider" id="colorSlider">
   </div>
   <div class="slidecontainer">
@@ -16,6 +17,13 @@
 
       <input type="number" id="countSliderInput" name="countSliderInput" min="1" max="100000" value="100" oninput="countSlider.value=countSliderInput.value" />
   </div>
+  <div class="slidecontainer">
+      <a>&#8596</a>
+      <input type="range" id="distanceSlider" name="distanceSlider" min="0" max="20" value="2" class="slider" oninput="distanceSliderInput.value=distanceSlider.value" step="0.1">
+
+      <input type="number" id="distanceSliderInput" name="distanceSliderInput" min="0" max="20" value="2" oninput="distanceSlider.value=distanceSliderInput.value" step="0.1"/>
+  </div>
+
   <canvas id="canvas" height="1000" width="1000"></canvas>
 </body>
 
