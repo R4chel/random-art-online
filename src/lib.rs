@@ -5,7 +5,6 @@ use std::fmt::{self, Display};
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::EventListener;
 
 #[derive(Debug)]
 struct Position {
@@ -200,12 +199,7 @@ fn make_animated_art() {
             return;
         }
 
-        // Set the body's text content to how many times this
-        // requestAnimationFrame callback has fired.
         i += 1;
-
-        let MIN_COLOR_DELTA = 10.0;
-        let MAX_COLOR_DELTA = 50.0;
 
         let color_delta = color_slider_value() as u8;
 
@@ -233,10 +227,6 @@ fn document() -> web_sys::Document {
     window()
         .document()
         .expect("should have a document on window")
-}
-
-fn body() -> web_sys::HtmlElement {
-    document().body().expect("document should have a body")
 }
 
 fn canvas() -> web_sys::HtmlCanvasElement {
