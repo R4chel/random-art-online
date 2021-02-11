@@ -157,7 +157,8 @@ fn draw_circle(context: &web_sys::CanvasRenderingContext2d, circle: &Circle) {
     context.stroke();
 }
 
-fn make_art() {
+fn clear_board() {
+    web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("CLEAR")));
     let canvas = canvas();
     let context = context();
 
@@ -167,6 +168,15 @@ fn make_art() {
         canvas.width() as f64,
         canvas.height() as f64,
     );
+}
+
+fn make_art() {
+    web_sys::console::log(&js_sys::Array::from(&JsValue::from_str(
+        "I love making art!",
+    )));
+    let context = context();
+
+    clear_board();
 
     let mut circle = Circle::new();
     let f = Rc::new(RefCell::new(None));
@@ -253,20 +263,32 @@ pub fn start() {
     web_sys::console::log(&js_sys::Array::from(&JsValue::from_str(
         "I love printf debugging!",
     )));
+
     let document = document();
 
-    let button = document
-        .get_element_by_id("button")
+    let trash_button = document
+        .get_element_by_id("trashButton")
         .unwrap()
         .dyn_into::<web_sys::HtmlButtonElement>()
         .unwrap();
 
-    // TODO: disabling on click weird stuff with closure for now
-    // let onclick_handler = Closure::wrap(Box::new(move || {
-    // make_art(&canvas, &context);
-    // }) as Box<dyn FnMut()>);
-    // button.set_onclick(Some(onclick_handler.as_ref().unchecked_ref()));
-    // onclick_handler.forget();
+    let trash_onclick_handler = Closure::wrap(Box::new(move || {
+        web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("Here!")));
+        clear_board();
+        web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("There!")));
+    }) as Box<dyn FnMut()>);
+    trash_button.set_onclick(Some(trash_onclick_handler.as_ref().unchecked_ref()));
+    trash_onclick_handler.forget();
 
-    make_art();
+    let art_button = document
+        .get_element_by_id("artButton")
+        .unwrap()
+        .dyn_into::<web_sys::HtmlButtonElement>()
+        .unwrap();
+
+    let art_onclick_handler = Closure::wrap(Box::new(move || {
+        make_art();
+    }) as Box<dyn FnMut()>);
+    art_button.set_onclick(Some(art_onclick_handler.as_ref().unchecked_ref()));
+    art_onclick_handler.forget();
 }
