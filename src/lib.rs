@@ -175,9 +175,6 @@ fn make_art() {
         "I love making art!",
     )));
     let context = context();
-
-    clear_board();
-
     let mut circle = Circle::new();
     let f = Rc::new(RefCell::new(None));
     let g = f.clone();
@@ -273,9 +270,7 @@ pub fn start() {
         .unwrap();
 
     let trash_onclick_handler = Closure::wrap(Box::new(move || {
-        web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("Here!")));
         clear_board();
-        web_sys::console::log(&js_sys::Array::from(&JsValue::from_str("There!")));
     }) as Box<dyn FnMut()>);
     trash_button.set_onclick(Some(trash_onclick_handler.as_ref().unchecked_ref()));
     trash_onclick_handler.forget();
