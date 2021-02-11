@@ -180,7 +180,7 @@ fn make_art() {
     let g = f.clone();
 
     let mut i = 0;
-    let count = 100000;
+    let count = count_slider_value();
     *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
         if i > count {
             // Drop our handle to this closure so that it will get cleaned
@@ -253,6 +253,15 @@ fn color_slider_value() -> u8 {
         .dyn_into::<web_sys::HtmlInputElement>()
         .unwrap()
         .value_as_number() as u8
+}
+
+fn count_slider_value() -> u32 {
+    document()
+        .get_element_by_id("countSlider")
+        .unwrap()
+        .dyn_into::<web_sys::HtmlInputElement>()
+        .unwrap()
+        .value_as_number() as u32
 }
 
 #[wasm_bindgen(start)]

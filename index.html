@@ -10,6 +10,11 @@
   <div class="slidecontainer">
     <input type="range" min="0" max="50" value="5" class="slider" id="colorSlider">
   </div>
+  <div class="slidecontainer">
+      <input type="range" id="countSlider" name="countSlider" min="1" max="100000" value="100" class="slider" oninput="countSliderInput.value=countSlider.value">
+
+      <input type="number" id="countSliderInput" name="countSliderInput" min="1" max="100000" value="100" oninput="countSlider.value=countSliderInput.value" />
+  </div>
   <canvas id="canvas" height="1000" width="1000"></canvas>
 </body>
 
