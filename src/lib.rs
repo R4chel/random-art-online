@@ -173,9 +173,9 @@ fn make_art() {
     let g = f.clone();
 
     let mut i = 0;
-
+    let count = 100000;
     *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
-        if i > 7000 {
+        if i > count {
 
             // Drop our handle to this closure so that it will get cleaned
             // up once we return.
