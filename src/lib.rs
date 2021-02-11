@@ -170,7 +170,18 @@ fn clear_board() {
     );
 }
 
-fn make_art() {
+fn make_unanimated_art() {
+    let context = context();
+    let mut circle = Circle::new();
+
+    let count = count_slider_value();
+    let color_delta = color_slider_value() as u8;
+    for _ in 0..count {
+        draw_circle(&context, &circle);
+        circle.update(color_delta);
+    }
+}
+fn make_animated_art() {
     web_sys::console::log(&js_sys::Array::from(&JsValue::from_str(
         "I love making art!",
     )));
@@ -291,8 +302,20 @@ pub fn start() {
         .unwrap();
 
     let art_onclick_handler = Closure::wrap(Box::new(move || {
-        make_art();
+        make_animated_art();
     }) as Box<dyn FnMut()>);
     art_button.set_onclick(Some(art_onclick_handler.as_ref().unchecked_ref()));
     art_onclick_handler.forget();
+
+    let still_button = document
+        .get_element_by_id("stillButton")
+        .unwrap()
+        .dyn_into::<web_sys::HtmlButtonElement>()
+        .unwrap();
+
+    let still_onclick_handler = Closure::wrap(Box::new(move || {
+        make_unanimated_art();
+    }) as Box<dyn FnMut()>);
+    still_button.set_onclick(Some(still_onclick_handler.as_ref().unchecked_ref()));
+    still_onclick_handler.forget();
 }
