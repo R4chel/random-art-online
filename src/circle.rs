@@ -25,7 +25,7 @@ impl Position {
     }
 
     fn validate(&self) -> bool {
-        self.x > MIN_POS && self.x < MAX_X_POS && self.y > MIN_POS && self.y < MAX_Y_POS
+        self.x >= MIN_POS && self.x <= MAX_X_POS && self.y >= MIN_POS && self.y <= MAX_Y_POS
     }
 
     fn update(&mut self, max_position_delta: f64) {
@@ -36,6 +36,7 @@ impl Position {
         let y_max = f64::min(MAX_Y_POS, self.y + max_position_delta);
         self.x = random_in_range(x_min, x_max);
         self.y = random_in_range(y_min, y_max);
+        assert!(self.validate());
     }
 }
 
@@ -46,7 +47,7 @@ struct ColorBit {
 
 impl Display for ColorBit {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({})", self.bit)
+        write!(f, "{}", self.bit)
     }
 }
 
