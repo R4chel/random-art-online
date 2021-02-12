@@ -8,6 +8,10 @@ struct Position {
     y: f64,
 }
 
+fn random_in_range(min: f64, max: f64) -> f64 {
+    (random() * (max - min)) + min
+}
+
 const MIN_POS: f64 = 0.0;
 const MAX_X_POS: f64 = 500.0;
 const MAX_Y_POS: f64 = 250.0;
@@ -15,8 +19,8 @@ const RADIUS: f64 = 2.2;
 impl Position {
     fn rand() -> Self {
         Position {
-            x: f64::floor(random() * (MAX_X_POS - MIN_POS) as f64) + MIN_POS,
-            y: f64::floor(random() * (MAX_Y_POS - MIN_POS) as f64) + MIN_POS,
+            x: random_in_range(MIN_POS, MAX_X_POS),
+            y: random_in_range(MIN_POS, MAX_Y_POS),
         }
     }
 
@@ -24,30 +28,14 @@ impl Position {
         self.x > MIN_POS && self.x < MAX_X_POS && self.y > MIN_POS && self.y < MAX_Y_POS
     }
 
-    fn update(&mut self, position_delta: f64) {
-        let mut options: Vec<Self> = Vec::new();
+    fn update(&mut self, max_position_delta: f64) {
+        let x_min = f64::max(MIN_POS, self.x - max_position_delta);
+        let x_max = f64::min(MAX_X_POS, self.x + max_position_delta);
 
-        for x_multiplier in -1..=1 {
-            for y_multiplier in -1..=1 {
-                let new_position = Position {
-                    x: self.x + position_delta * (x_multiplier as f64),
-                    y: self.y + position_delta * (y_multiplier as f64),
-                };
-
-                if (x_multiplier == 0 && y_multiplier == 0) || !new_position.validate() {
-                    continue;
-                } else {
-                    options.push(new_position)
-                };
-            }
-        }
-
-        let random_index = f64::floor(random() * options.len() as f64) as usize;
-
-        let random_element = &options[random_index];
-
-        self.x = random_element.x;
-        self.y = random_element.y;
+        let y_min = f64::max(MIN_POS, self.y - max_position_delta);
+        let y_max = f64::min(MAX_Y_POS, self.y + max_position_delta);
+        self.x = random_in_range(x_min, x_max);
+        self.y = random_in_range(y_min, y_max);
     }
 }
 
