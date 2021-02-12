@@ -1,10 +1,6 @@
 use js_sys::Math::random;
-use std::cell::RefCell;
 use std::f64;
 use std::fmt::{self, Display};
-use std::rc::Rc;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
 
 #[derive(Debug)]
 struct Position {
@@ -98,11 +94,8 @@ impl Color {
         }
     }
 
-    fn to_js_value(&self) -> JsValue {
-        JsValue::from_str(&format!(
-            "rgb({}, {}, {})",
-            self.r.bit, self.g.bit, self.b.bit
-        ))
+    fn to_rgb(&self) -> String {
+        format!("rgb({}, {}, {})", self.r.bit, self.g.bit, self.b.bit)
     }
 
     fn update(&mut self, color_delta: u8) {
@@ -135,8 +128,8 @@ impl Circle {
         self.color.update(color_delta);
     }
 
-    pub fn color(&self) -> JsValue {
-        self.color.to_js_value()
+    pub fn color(&self) -> String {
+        self.color.to_rgb()
     }
 
     pub fn x_position(&self) -> f64 {
