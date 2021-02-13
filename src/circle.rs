@@ -68,10 +68,32 @@ impl ColorBit {
 }
 
 #[derive(Debug)]
+struct Opacity {
+    bit: f64,
+}
+
+impl Display for Opacity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.bit)
+    }
+}
+
+impl Opacity {
+    fn rand() -> Self {
+        Opacity { bit: random() }
+    }
+
+    fn update(&mut self) -> () {
+        self.bit = random()
+    }
+}
+
+#[derive(Debug)]
 struct Color {
     r: ColorBit,
     g: ColorBit,
     b: ColorBit,
+    a: Opacity,
 }
 
 impl Color {
@@ -80,11 +102,15 @@ impl Color {
             r: ColorBit::rand(),
             g: ColorBit::rand(),
             b: ColorBit::rand(),
+            a: Opacity::rand(),
         }
     }
 
-    fn to_rgb(&self) -> String {
-        format!("rgb({}, {}, {})", self.r.bit, self.g.bit, self.b.bit)
+    fn to_rgba(&self) -> String {
+        format!(
+            "rgb({}, {}, {}, {})",
+            self.r.bit, self.g.bit, self.b.bit, self.a.bit
+        )
     }
 
     fn update(&mut self, color_delta: u8) {
@@ -93,6 +119,7 @@ impl Color {
         update_with_delta(&mut self.r);
         update_with_delta(&mut self.g);
         update_with_delta(&mut self.b);
+        self.a.update();
     }
 }
 
@@ -118,7 +145,7 @@ impl Circle {
     }
 
     pub fn color(&self) -> String {
-        self.color.to_rgb()
+        self.color.to_rgba()
     }
 
     pub fn x_position(&self) -> f64 {
