@@ -54,16 +54,14 @@ impl Display for ColorBit {
 impl ColorBit {
     fn rand() -> Self {
         ColorBit {
-            bit: f64::floor(random() * 255 as f64) as u8,
+            bit: f64::round(random() * 255 as f64) as u8,
         }
     }
 
     fn update(&mut self, color_delta: u8) -> () {
-        if random() > 0.5 {
-            self.bit = self.bit.saturating_add(color_delta);
-        } else {
-            self.bit = self.bit.saturating_sub(color_delta);
-        };
+        let min = self.bit.saturating_sub(color_delta);
+        let max = self.bit.saturating_add(color_delta);
+        self.bit = f64::round(random() * (max - min) as f64) as u8 + min;
     }
 }
 
