@@ -10,7 +10,8 @@
     <button id="stillButton">&#127823</button>
     <div class="slidecontainer">
         <a>&#127752</a>
-        <input type="range" id="colorSlider" min="0" max="50" value="5" class="slider" id="colorSlider">
+        <input type="range" id="colorSlider" id="colorSliderInput" min="0" max="50" value="5" class="slider"
+            oninput="colorSliderInput.value=colorSlider.value">
         <input type="number" id="colorSliderInput" name="colorSliderInput" min="0" max="50" value="5" step="1"
             oninput="colorSlider.value=colorSliderInput.value" />
     </div>
