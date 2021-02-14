@@ -10,19 +10,25 @@
     <button id="stillButton">&#127823</button>
     <div class="slidecontainer">
         <a>&#127752</a>
-        <input type="range" min="0" max="50" value="5" class="slider" id="colorSlider">
+        <input type="range" id="colorSlider" min="0" max="50" value="5" class="slider" id="colorSlider">
+        <input type="number" id="colorSliderInput" name="colorSliderInput" min="0" max="50" value="5" step="1"
+            oninput="colorSlider.value=colorSliderInput.value" />
     </div>
     <div class="slidecontainer">
-        <input type="range" id="countSlider" name="countSlider" min="1" max="100000" value="1000" class="slider" oninput="countSliderInput.value=countSlider.value" step="100">
+        <input type="range" id="countSlider" name="countSlider" min="1" max="100000" value="1000" class="slider"
+            oninput="countSliderInput.value=countSlider.value" step="100">
 
-        <input type="number" id="countSliderInput" name="countSliderInput" min="1" max="100000" value="1000" step="100" oninput="countSlider.value=countSliderInput.value" />
+        <input type="number" id="countSliderInput" name="countSliderInput" min="1" max="100000" value="1000" step="100"
+            oninput="countSlider.value=countSliderInput.value" />
     </div>
     <div class="slidecontainer">
         <a>&#8596
         </a>
-        <input type="range" id="distanceSlider" name="distanceSlider" min="0" max="20" value="2.3" class="slider" oninput="distanceSliderInput.value=distanceSlider.value" step="0.1">
+        <input type="range" id="distanceSlider" name="distanceSlider" min="0" max="20" value="2.3" class="slider"
+            oninput="distanceSliderInput.value=distanceSlider.value" step="0.1">
 
-        <input type="number" id="distanceSliderInput" name="distanceSliderInput" min="0" max="20" value="2.3" oninput="distanceSlider.value=distanceSliderInput.value" step="0.1" />
+        <input type="number" id="distanceSliderInput" name="distanceSliderInput" min="0" max="20" value="2.3"
+            oninput="distanceSlider.value=distanceSliderInput.value" step="0.1" />
     </div>
 
     <canvas id="canvas" height="1000" width="1000"></canvas>
