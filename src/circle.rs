@@ -1,4 +1,4 @@
-use js_sys::Math::random;
+use js_sys::Math::random as js_math_random;
 use std::f64;
 use std::fmt::{self, Display};
 
@@ -6,6 +6,15 @@ use std::fmt::{self, Display};
 struct Position {
     x: f64,
     y: f64,
+}
+
+// not sure what I'm going to do with this but currently leaving in option to use either
+fn random() -> f64 {
+    if false {
+        js_math_random()
+    } else {
+        rand::random()
+    }
 }
 
 fn random_in_range(min: f64, max: f64) -> f64 {
@@ -61,7 +70,7 @@ impl ColorBit {
     fn update(&mut self, color_delta: u8) -> () {
         let min = self.bit.saturating_sub(color_delta);
         let max = self.bit.saturating_add(color_delta);
-        self.bit = f64::round(random() * (max - min) as f64) as u8 + min;
+        self.bit = f64::floor(random() * (max - min + 1) as f64) as u8 + min;
     }
 }
 
